@@ -1,0 +1,62 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "type": "string",
+      "metadata": {
+        "description": "Location for the Event Hub"
+      }
+    },
+    "eventHubNamespace": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of Event Hub namespace"
+      }
+    },
+    "eventHubName": {
+      "type": "string",
+      "defaultValue": "scanner-collect-eventhub",
+      "metadata": {
+        "description": "Name of Event Hub"
+      }
+    },
+    "partitionCount": {
+      "type": "int",
+      "defaultValue": 32,
+      "metadata": {
+        "description": "Number of partitions for the Event Hub"
+      }
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.EventHub/namespaces",
+      "apiVersion": "2024-01-01",
+      "name": "[parameters('eventHubNamespace')]",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "Standard",
+        "tier": "Standard",
+        "capacity": 1
+      },
+      "tags": {},
+      "properties": {
+        "minimumTlsVersion": "1.2"
+      },
+      "resources": [
+        {
+          "type": "eventhubs",
+          "apiVersion": "2024-01-01",
+          "name": "[parameters('eventHubName')]",
+          "properties": {
+            "partitionCount": "[parameters('partitionCount')]"
+          },
+          "dependsOn": [
+            "[resourceId('Microsoft.EventHub/namespaces/', parameters('eventHubNamespace'))]"
+          ]
+        }
+      ]
+    }
+  ]
+}

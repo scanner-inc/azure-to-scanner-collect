@@ -1,0 +1,96 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "scannerCollectUrl": { "type": "string" },
+    "scannerBearerToken": { "type": "securestring" },
+    "resourcesLocation": { "type": "string", "defaultValue": "[resourceGroup().location]" },
+    "functionAppName": { "type": "string", "defaultValue": "[concat('scanner-collect-functionapp-', uniqueString(resourceGroup().id))]" },
+    "eventhubName": { "type": "string", "defaultValue": "scanner-collect-eventhub" },
+    "eventhubNamespace": { "type": "string", "defaultValue": "[concat('scanner-ns-', uniqueString(resourceGroup().id))]" },
+    "eventhubPartitionCount": { "type": "int", "defaultValue": 32 },
+    "functionPackageUri": {
+      "type": "string",
+      "defaultValue": "https://raw.githubusercontent.com/scanner-inc/azure-to-scanner-collect/main/function/target/deploy.zip"
+    },
+    "storageEndpointSuffix": {
+      "type": "string",
+      "defaultValue": "[environment().suffixes.storage]"
+    },
+    "sendActivityLogs": { "type": "bool", "defaultValue": true },
+    "diagnosticSettingName": {
+      "type": "string",
+      "defaultValue": "[concat('scanner-diagnostic-setting-', uniqueString(newGuid()))]"
+    }
+  },
+  "variables": {
+    "eventHubTemplateLink": "https://raw.githubusercontent.com/scanner-inc/azure-to-scanner-collect/main/templates/event_hub.json",
+    "functionAppTemplateLink": "https://raw.githubusercontent.com/scanner-inc/azure-to-scanner-collect/main/templates/function_template.json",
+    "activityLogDiagnosticSettingsTemplateLink": "https://raw.githubusercontent.com/scanner-inc/azure-to-scanner-collect/main/templates/activity_log_diagnostic_settings.json"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2024-07-01",
+      "name": "eventHubTemplate",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('eventHubTemplateLink')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "location": { "value": "[parameters('resourcesLocation')]" },
+          "eventHubNamespace": { "value": "[parameters('eventhubNamespace')]" },
+          "eventHubName": { "value": "[parameters('eventhubName')]" },
+          "partitionCount": { "value": "[parameters('eventhubPartitionCount')]" }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2024-07-01",
+      "name": "functionAppTemplate",
+      "dependsOn": ["eventHubTemplate"],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('functionAppTemplateLink')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "location": { "value": "[parameters('resourcesLocation')]" },
+          "eventHubNamespace": { "value": "[parameters('eventhubNamespace')]" },
+          "eventHubName": { "value": "[parameters('eventhubName')]" },
+          "functionAppName": { "value": "[parameters('functionAppName')]" },
+          "functionPackageUri": { "value": "[parameters('functionPackageUri')]" },
+          "scannerCollectUrl": { "value": "[parameters('scannerCollectUrl')]" },
+          "scannerBearerToken": { "value": "[parameters('scannerBearerToken')]" },
+          "endpointSuffix": { "value": "[parameters('storageEndpointSuffix')]" }
+        }
+      }
+    },
+    {
+      "condition": "[parameters('sendActivityLogs')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2024-07-01",
+      "name": "[concat(parameters('diagnosticSettingName'), '-template')]",
+      "dependsOn": ["functionAppTemplate"],
+      "location": "[parameters('resourcesLocation')]",
+      "subscriptionId": "[subscription().subscriptionId]",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('activityLogDiagnosticSettingsTemplateLink')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "settingName": { "value": "[parameters('diagnosticSettingName')]" },
+          "resourceGroup": { "value": "[resourceGroup().name]" },
+          "eventHubNamespace": { "value": "[parameters('eventhubNamespace')]" },
+          "eventHubName": { "value": "[parameters('eventhubName')]" }
+        }
+      }
+    }
+  ]
+}

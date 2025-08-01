@@ -1,0 +1,57 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "settingName": {
+      "type": "string",
+      "defaultValue": "scanner-collect-activity-logs-diagnostic-setting",
+      "metadata": {
+        "description": "The name of the diagnostic setting that forwards activity logs."
+      }
+    },
+    "resourceGroup": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the Resource Group that contains the Event Hub."
+      }
+    },
+    "eventHubNamespace": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the Event Hub namespace. This must be globally unique."
+      }
+    },
+    "eventHubName": {
+      "type": "string",
+      "defaultValue": "scanner-collect-eventhub",
+      "metadata": {
+        "description": "The name of the Event Hub that will receive the activity logs."
+      }
+    }
+  },
+  "variables": {
+    "subscriptionId": "[subscription().subscriptionId]",
+    "eventHubAuthorizationRuleId": "[concat('/subscriptions/', variables('subscriptionId'), '/resourceGroups/', parameters('resourceGroup'), '/providers/Microsoft.EventHub/namespaces/', parameters('eventHubNamespace'), '/authorizationRules/RootManageSharedAccessKey')]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Insights/diagnosticSettings",
+      "apiVersion": "2017-05-01-preview",
+      "name": "[parameters('settingName')]",
+      "properties": {
+        "eventHubAuthorizationRuleId": "[variables('eventHubAuthorizationRuleId')]",
+        "eventHubName": "[parameters('eventHubName')]",
+        "logs": [
+          { "category": "Administrative", "enabled": true },
+          { "category": "Security", "enabled": true },
+          { "category": "ServiceHealth", "enabled": true },
+          { "category": "Alert", "enabled": true },
+          { "category": "Recommendation", "enabled": true },
+          { "category": "Policy", "enabled": true },
+          { "category": "Autoscale", "enabled": true },
+          { "category": "ResourceHealth", "enabled": true }
+        ]
+      }
+    }
+  ]
+}
