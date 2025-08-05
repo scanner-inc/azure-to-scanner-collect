@@ -2,6 +2,7 @@
   "name": "azure-to-scanner-collect-function",
   "version": "1.0.0",
   "license": "Apache-2.0",
+  "main": "index.js",
   "dependencies": {
     "@azure/functions": "^4.7.0"
   }
