@@ -28,11 +28,27 @@ If your organization requires minimal permissions, you need these specific right
 
 **Note:** Subscription-level access is required because Azure Activity Logs are subscription-wide resources.
 
-## Deploy to Azure
+## Setup Guide
+
+### Step 1: Create Azure HTTP Receiver in Scanner Collect
+
+- Go to the **Collect** tab in your Scanner account
+- Create a new **Azure** source with origin set to **HTTP Push**
+- Generate a Bearer token: eg. `echo "token_$(uuidgen | tr '[:upper:]' '[:lower:])"`
+- Complete the setup with default values
+- **Save both the Bearer token and HTTP URL** - you'll need them for Azure deployment
+
+### Step 2: Deploy to Azure
 
 **Before deploying:** Ensure you have Contributor access to both your target Resource Group and Azure Subscription.
 
-You can deploy using Azure Resource Manager template by clicking the button
-below:
+1. **Open Deployment:** Click the "Deploy to Azure" button below
+2. **Configure Template:**
+   - Paste your **Scanner Collect URL** from Step 1
+   - Paste your **Scanner Bearer Token** from Step 1
+   - Keep **Send Activity Logs** checked to forward Azure Activity Logs
+3. **Deploy:** Click "Create" to deploy the resources
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fscanner-inc%2Fazure-to-scanner-collect%2Fmain%2Ftemplates%2Froot_template.json)
+
+Once deployment completes, Azure activity logs will automatically flow to Scanner Collect.
