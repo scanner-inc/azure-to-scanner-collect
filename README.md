@@ -44,6 +44,7 @@ If your organization requires minimal permissions, you need these specific right
 
 1. **Open Deployment:** Click the "Deploy to Azure" button below
 2. **Configure Template:**
+   - Create a new resource group, eg. with a name like `scanner-collect-rg`
    - Paste your **Scanner Collect URL** from Step 1
    - Paste your **Scanner Bearer Token** from Step 1
    - Keep **Send Activity Logs** checked to forward Azure Activity Logs
