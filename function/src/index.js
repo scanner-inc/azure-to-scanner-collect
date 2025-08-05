@@ -47,7 +47,7 @@ async function retryWithBackoff(
         ctx.warn(`Request timed out after 30 seconds`);
         err = new Error('Request timeout (30s)');
       }
-      
+
       // Abort immediately on non-retryable error
       if (err instanceof NonRetryableError) {
         ctx.error(`Stopped: ${err.message}`);
@@ -77,29 +77,36 @@ app.eventHub('scanner-collect-eventhub-trigger', {
     // Always work with an array
     if (!Array.isArray(messages)) messages = [messages];
 
-    // Convert messages to JSON strings
-    const jsonMessages = messages.map(m => (typeof m === 'string' ? m : JSON.stringify(m)));
-
-    // Batch messages to stay under 5MB per request
+    // Convert messages to JSON strings, unroll records arrays, and filter oversized
     const MAX_BATCH_SIZE = 5 * 1024 * 1024; // 5MB
-    
-    // Filter out oversized messages
     const validMessages = [];
-    for (const message of jsonMessages) {
-      const messageSize = Buffer.byteLength(message, 'utf8');
-      if (messageSize > MAX_BATCH_SIZE) {
-        context.warn(`Message exceeds 5MB limit (${messageSize} bytes), skipping`);
-      } else {
-        validMessages.push(message);
+
+    for (const message of messages) {
+      const messageObj = typeof message === 'string' ? JSON.parse(message) : message;
+
+      // Collect records to process (either records array or single message)
+      const recordsToProcess = messageObj.records && Array.isArray(messageObj.records)
+        ? messageObj.records
+        : [messageObj];
+
+      // Process each record and check size
+      for (const record of recordsToProcess) {
+        const jsonRecord = JSON.stringify(record);
+        const messageSize = Buffer.byteLength(jsonRecord, 'utf8');
+        if (messageSize > MAX_BATCH_SIZE) {
+          context.warn(`Message exceeds 5MB limit (${messageSize} bytes), skipping`);
+        } else {
+          validMessages.push(jsonRecord);
+        }
       }
     }
-    
+
     // Early return if no valid messages
     if (validMessages.length === 0) {
       context.warn('No valid messages to send after filtering oversized messages');
       return;
     }
-    
+
     const batches = [];
     let currentBatch = [];
     let currentSize = 0;
