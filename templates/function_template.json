@@ -55,7 +55,7 @@
     }
   },
   "variables": {
-    "storageAccountName": "[concat(uniquestring(resourceGroup().id), 'scannerstore')]",
+    "storageAccountName": "[concat(uniquestring(resourceGroup().id), 'storescnr')]",
     "eventHubAuthRule": "[resourceId('Microsoft.EventHub/namespaces/authorizationRules', parameters('eventHubNamespace'),'RootManageSharedAccessKey')]"
   },
   "resources": [
