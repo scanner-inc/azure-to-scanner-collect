@@ -80,6 +80,7 @@
       "properties": {
         "name": "[parameters('functionAppName')]",
         "clientAffinityEnabled": false,
+        "publicNetworkAccess": "Disabled",
         "siteConfig": {
           "cors": {
             "allowedOrigins": [
