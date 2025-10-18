@@ -78,6 +78,7 @@
       "kind": "functionapp",
       "dependsOn": ["[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"],
       "properties": {
+        "name": "[parameters('functionAppName')]",
         "clientAffinityEnabled": false,
         "publicNetworkAccess": "Disabled",
         "siteConfig": {
