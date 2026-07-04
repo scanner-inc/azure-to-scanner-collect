@@ -1,0 +1,4 @@
+azure-functions>=1.20
+azure-identity>=1.16
+azure-storage-blob>=12.19
+boto3>=1.34

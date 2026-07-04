@@ -1,0 +1,24 @@
+# ============================================================================
+# Global Configuration
+# ============================================================================
+# These variables are shared across all pipeline instances
+
+# Azure Configuration
+subscription_id = "00000000-0000-0000-0000-000000000000"
+location        = "eastus"
+# resource_group_name = "scanner-collect-rg"  # Optional: override the resource group name
+
+# AWS Configuration
+aws_account_id = "123456789012"
+aws_region     = "us-east-1"
+# aws_profile  = "my-profile"  # Optional: specify AWS CLI profile to use (defaults to default profile)
+
+# Global Settings
+# Allow Terraform to delete non-empty buckets during destroy (useful for testing/development)
+# WARNING: In production, leave this as false to prevent accidental data loss
+force_destroy_buckets = false
+
+# Scanner Integration (Optional - applies to all pipelines)
+# Uncomment and configure to enable scanner integration for all S3 buckets
+# scanner_sns_topic_arn = "arn:aws:sns:us-east-1:123456789012:scnr-LogsBucketEventNotificationTopic"
+# scanner_role_arn      = "arn:aws:iam::123456789012:role/scnr-ScannerRole"
