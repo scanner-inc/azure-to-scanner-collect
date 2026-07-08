@@ -11,7 +11,7 @@
     "eventhubPartitionCount": { "type": "int", "defaultValue": 32 },
     "functionPackageUri": {
       "type": "string",
-      "defaultValue": "https://raw.githubusercontent.com/scanner-inc/azure-to-scanner-collect/main/function/target/deploy.zip"
+      "defaultValue": "https://raw.githubusercontent.com/scanner-inc/azure-to-scanner-collect/legacy-arm-v1/function/target/deploy.zip"
     },
     "storageEndpointSuffix": {
       "type": "string",
@@ -24,9 +24,9 @@
     }
   },
   "variables": {
-    "eventHubTemplateLink": "https://raw.githubusercontent.com/scanner-inc/azure-to-scanner-collect/main/templates/event_hub.json",
-    "functionAppTemplateLink": "https://raw.githubusercontent.com/scanner-inc/azure-to-scanner-collect/main/templates/function_template.json",
-    "activityLogDiagnosticSettingsTemplateLink": "https://raw.githubusercontent.com/scanner-inc/azure-to-scanner-collect/main/templates/activity_log_diagnostic_settings.json"
+    "eventHubTemplateLink": "https://raw.githubusercontent.com/scanner-inc/azure-to-scanner-collect/legacy-arm-v1/templates/event_hub.json",
+    "functionAppTemplateLink": "https://raw.githubusercontent.com/scanner-inc/azure-to-scanner-collect/legacy-arm-v1/templates/function_template.json",
+    "activityLogDiagnosticSettingsTemplateLink": "https://raw.githubusercontent.com/scanner-inc/azure-to-scanner-collect/legacy-arm-v1/templates/activity_log_diagnostic_settings.json"
   },
   "resources": [
     {

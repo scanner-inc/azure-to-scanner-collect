@@ -50,6 +50,6 @@ If your organization requires minimal permissions, you need these specific right
    - Keep **Send Activity Logs** checked to forward Azure Activity Logs
 3. **Deploy:** Click "Create" to deploy the resources
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fscanner-inc%2Fazure-to-scanner-collect%2Fmain%2Ftemplates%2Froot_template.json)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fscanner-inc%2Fazure-to-scanner-collect%2Flegacy-arm-v1%2Ftemplates%2Froot_template.json)
 
 Once deployment completes, Azure activity logs will automatically flow to Scanner Collect.
